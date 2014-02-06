@@ -4,8 +4,11 @@ python:
 install:
 - python setup.py install
 - pip install pymongo redis pika MySQL-python
+- pip install -U http://github.com/ClearcodeHQ/summon_process/tarball/master#egg=summon_process-0.1.2
 script:
-- py.test tests
+- py.test -v -s tests
+services:
+  - rabbitmq
 deploy:
   provider: pypi
   user:
@@ -14,3 +17,5 @@ deploy:
     secure: DRWW+buXoDjLjMDCiUKnnWiCVLUaei6iQsUTwU/3+UOPgd2htzAHo59X7GhF49N6cYG98qXZNayeM+a4QkHFnSCyzwFvlqrPpwnuINQtb0Bucoh9jnjKFq1OwAjaTdKz61YlRq6qaSXEGOKka08CN9Aj2UIUz/lNgMkZjkFmAIQ=
   on:
     tags: true
+after_script:
+- sudo rabbitmqctl status
