@@ -218,6 +218,8 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
 
         print '\nStarting RabbitMQ process on port', rabbit_port
         rabbit_executor.start()
+        for param in os.environ.keys():
+            print "%20s %s" % (param,os.environ[param])
         print 'Started'
         pid_file = base_path / rabbit_node_name + '.pid'
         wait_cmd = rabbit_ctl, '-q', 'wait', pid_file
