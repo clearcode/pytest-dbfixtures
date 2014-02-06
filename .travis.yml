@@ -7,6 +7,8 @@ install:
 - pip install -U http://github.com/ClearcodeHQ/summon_process/tarball/master#egg=summon_process-0.1.2
 script:
 - py.test -v -s tests
+services:
+  - rabbitmq
 deploy:
   provider: pypi
   user:
