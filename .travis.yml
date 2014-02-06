@@ -4,6 +4,7 @@ python:
 install:
 - python setup.py install
 - pip install pymongo redis pika MySQL-python
+- pip install http://github.com/ClearcodeHQ/summon_process/tarball/master#egg=summon_process-0.1.2
 script:
 - py.test -v -s tests
 deploy:
