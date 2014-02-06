@@ -216,7 +216,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
             rabbit_ctl = config.rabbit.rabbit_ctl
 
         print '\nStarting RabbitMQ process on port', rabbit_port
-        rabbit_executor.start()
+        rabbit_executor.start(timeout=5)
         print 'Started'
         pid_file = base_path / rabbit_node_name + '.pid'
         wait_cmd = rabbit_ctl, '-q', 'wait', pid_file
