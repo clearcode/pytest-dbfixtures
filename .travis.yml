@@ -16,4 +16,4 @@ deploy:
   on:
     tags: true
 after_script:
-- cat /tmp/rabbitmq_fixture*/*
+- sudo rabbitmqctl status
