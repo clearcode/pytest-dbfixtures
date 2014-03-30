@@ -18,6 +18,7 @@
 
 import re
 import os
+import sys
 from setuptools import setup, find_packages
 
 
@@ -25,6 +26,17 @@ here = os.path.dirname(__file__)
 with open(os.path.join(here, 'pytest_dbfixtures', '__init__.py')) as v_file:
     package_version = re.compile(
         r".*__version__ = '(.*?)'", re.S).match(v_file.read()).group(1)
+
+install_requires = [
+    'pytest>=2.3.4',
+    'summon_process>=0.1.2',
+    'pyaml>=3.10',
+    'pymlconf>=0.2.10a',
+    'path.py>=4.2',
+]
+
+if sys.version_info[:2] == (2, 6):
+    install_requires.append('importlib')
 
 
 setup(
@@ -35,13 +47,7 @@ setup(
     author_email='thearoom@clearcode.cc',
     url='https://github.com/clearcode/pytest-dbfixtures',
     packages=find_packages(),
-    install_requires=[
-        'pytest>=2.3.4',
-        'summon_process>=0.1.2',
-        'pyaml>=3.10',
-        'pymlconf>=0.2.10a',
-        'path.py>=4.2',
-    ],
+    install_requires=install_requires,
     include_package_data=True,
     extras_require={
         'documentation': [
