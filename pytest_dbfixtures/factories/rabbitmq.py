@@ -147,7 +147,7 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
     return rabbitmq_proc_fixture
 
 
-def rabbitmq(process_fixture_name, host=None, port=None):
+def rabbitmq(process_fixture_name, host=None, port=None, rabbit_ctl_file=None):
     '''
         Connects with RabbitMQ server
 
@@ -155,6 +155,7 @@ def rabbitmq(process_fixture_name, host=None, port=None):
                                          returned by rabbitmq_proc
         :param str host: RabbitMQ server host
         :param int port: RabbitMQ server port
+        :param str rabbit_ctl_file: path to rabbitmqctl file
 
         :returns RabbitMQ connection
     '''
@@ -175,6 +176,7 @@ def rabbitmq(process_fixture_name, host=None, port=None):
         request.getfuncargvalue(process_fixture_name)
 
         pika, config = try_import('pika', request)
+        rabbit_ctl = rabbit_ctl_file or config.rabbit.rabbit_ctl
 
         rabbit_params = pika.connection.ConnectionParameters(
             host=host or config.rabbit.host,
@@ -188,6 +190,18 @@ def rabbitmq(process_fixture_name, host=None, port=None):
         except pika.adapters.blocking_connection.exceptions.ConnectionClosed:
             print "Be sure that you're connecting rabbitmq-server >= 2.8.4"
 
+        def reset_rabbit():
+            '''
+            `force_reset <http://www.rabbitmq.com/man/rabbitmqctl.1.man.html>`
+            Removes the node from any cluster it belongs to, removes all data
+            from the management database, such as configured users and vhosts,
+            and deletes all persistent messages.
+            '''
+            subprocess.Popen((rabbit_ctl, '-q', 'stop_app')).communicate()
+            subprocess.Popen((rabbit_ctl, '-q', 'force_reset')).communicate()
+            subprocess.Popen((rabbit_ctl, '-q', 'start_app')).communicate()
+
+        request.addfinalizer(reset_rabbit)
         return rabbit_connection
 
     return rabbitmq_factory
