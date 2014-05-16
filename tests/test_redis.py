@@ -12,8 +12,8 @@ def test_redis(redisdb):
     assert test2 == 'test'
 
 
-redis_proc2 = factories.redis_proc(port=6381, params='--save "" --rdbcompression no' \
-                                                     '--rdbchecksum no --syslog-enabled no')
+redis2_params = '--save "" --rdbcompression no --rdbchecksum no --syslog-enabled no'
+redis_proc2 = factories.redis_proc(port=6381, params=redis2_params)
 redisdb2 = factories.redisdb('redis_proc2', port=6381)
 
 
