@@ -20,7 +20,6 @@ import os
 import re
 import shutil
 import subprocess
-import time
 
 import pytest
 
@@ -30,10 +29,8 @@ from pytest_dbfixtures.utils import get_config, try_import
 
 START_INFO = 'database system is ready to accept connections'
 
-BASE_PROC_START_COMMAND = """
-{postgresql_ctl} start -D {datadir}
--o "-F -p {port} -c %s='{unixsocketdir}'"
--l {logfile} {startparams}"""
+BASE_PROC_START_COMMAND = "{bindir}/postgres -D {datadir}" + \
+    " -F -p {port} -c %s='{unixsocketdir}' 2>&1 1>{logfile}"
 
 PROC_START_COMMAND = {
     '8.4': BASE_PROC_START_COMMAND % 'unix_socket_directory',
@@ -44,41 +41,10 @@ PROC_START_COMMAND = {
 }
 
 
-def wait_for_postgres(logfile, awaited_msg):
+def init_postgresql_directory(postgresql_ctl, user, datadir):
     """
-    Blocks until logfile is created by psql server.
-    Awaits for given message in logfile. Block until log contains message.
+    Initialize clean data directory for postgresql.
 
-    :param str logfile: logfile path
-    :param str awaited_msg: awaited message
-    """
-    while not os.path.isfile(logfile):
-        time.sleep(1)
-
-    while 1:
-        with open(logfile, 'r') as content_file:
-            content = content_file.read()
-            if awaited_msg in content:
-                break
-        time.sleep(1)
-
-
-def remove_postgresql_directory(logfile, datadir):
-    """
-    Checks postgresql directory and logfile. Delete a logfile if exist.
-    Recursively delete a directory tree if exist.
-
-    :param str logfile: logfile path
-    :param str datadir: datadir path
-    """
-    if os.path.isfile(logfile):
-        os.remove(logfile)
-    if os.path.isdir(datadir):
-        shutil.rmtree(datadir)
-
-
-def init_postgresql_directory(postgresql_ctl, user, datadir, logfile):
-    """
     #. Remove postgresql directory if exist.
     #. `Initialize postgresql data directory
         <www.postgresql.org/docs/9.3/static/app-initdb.html>`_
@@ -86,10 +52,10 @@ def init_postgresql_directory(postgresql_ctl, user, datadir, logfile):
     :param str postgresql_ctl: ctl path
     :param str user: postgresql username
     :param str datadir: datadir path
-    :param str logfile: logfile path
-
     """
-    remove_postgresql_directory(logfile, datadir)
+    if os.path.isdir(datadir):
+        shutil.rmtree(datadir)
+
     init_directory = (
         postgresql_ctl, 'initdb',
         '-o "--auth=trust --username=%s"' % user,
@@ -182,10 +148,13 @@ def postgresql_proc(executable=None, host=None, port=None):
         # check if that executable exists, as it's no on system PATH
         # only replace if executable isn't passed manually
         if not os.path.exists(postgresql_ctl) and executable is None:
-            pg_bindir = subprocess.check_output(
+            postgresql_bindir = subprocess.check_output(
                 ['pg_config', '--bindir'], universal_newlines=True
             ).strip()
-            postgresql_ctl = os.path.join(pg_bindir, 'pg_ctl')
+            postgresql_ctl = os.path.join(postgresql_bindir, 'pg_ctl')
+        else:
+            # get the pg_ctl's bindir
+            postgresql_bindir = postgresql_ctl.rsplit('/', 1)[0]
 
         pg_host = host or config.postgresql.host
         pg_port = port or config.postgresql.port
@@ -193,42 +162,28 @@ def postgresql_proc(executable=None, host=None, port=None):
         logfile = '/tmp/postgresql.{0}.log'.format(pg_port)
 
         init_postgresql_directory(
-            postgresql_ctl, config.postgresql.user, datadir, logfile
+            postgresql_ctl, config.postgresql.user, datadir
         )
         pg_version = postgresql_version(postgresql_ctl)
+        command = PROC_START_COMMAND[pg_version].format(
+            bindir=postgresql_bindir,
+            datadir=datadir,
+            port=pg_port,
+            unixsocketdir=config.postgresql.unixsocketdir,
+            logfile=logfile,
+            startparams=config.postgresql.startparams,
+        )
         postgresql_executor = TCPExecutor(
-            PROC_START_COMMAND[pg_version].format(
-                postgresql_ctl=postgresql_ctl,
-                datadir=datadir,
-                port=pg_port,
-                unixsocketdir=config.postgresql.unixsocketdir,
-                logfile=logfile,
-                startparams=config.postgresql.startparams,
-            ),
+            command,
             host=pg_host,
             port=pg_port,
+            shell=True,
         )
 
-        def stop_server_and_remove_directory():
-            subprocess.check_output(
-                '{postgresql_ctl} stop -D {datadir} '
-                '-o "-p {port} -c unix_socket_directory=\'{unixsocketdir}\'"'
-                .format(
-                    postgresql_ctl=postgresql_ctl,
-                    datadir=datadir,
-                    port=pg_port,
-                    unixsocketdir=config.postgresql.unixsocketdir
-                ),
-                shell=True)
-            postgresql_executor.stop()
-            remove_postgresql_directory(logfile, datadir)
-
-        request.addfinalizer(stop_server_and_remove_directory)
+        request.addfinalizer(postgresql_executor.stop)
 
         # start server
         postgresql_executor.start()
-        if '-w' in config.postgresql.startparams:
-            wait_for_postgres(logfile, START_INFO)
 
         return postgresql_executor
 
