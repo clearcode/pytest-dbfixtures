@@ -61,12 +61,14 @@ setup(
     ],
     include_package_data=True,
     extras_require={
+        'randomport': ['port-for>=0.3.1'],
         'documentation': ['Sphinx', ],
         'tests': [
             'pytest-cov',
             'pytest-xdist',
             'coveralls',
             'pylama',
+            'mock',
         ],
         'mysql': ['mysqlclient'],
         'postgresql': ['psycopg2'],

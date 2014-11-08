@@ -61,11 +61,11 @@ def mysql(process_fixture_name, user=None, passwd=None, db=None,
         :rtype: MySQLdb.connections.Connection
         :returns: connection to database
         """
-        get_process_fixture(request, process_fixture_name)
+        proc_fixture = get_process_fixture(request, process_fixture_name)
 
         config = get_config(request)
-        mysql_port = port or config.mysql.port
-        mysql_host = host or config.mysql.host
+        mysql_port = port or proc_fixture.port
+        mysql_host = host or proc_fixture.host
         mysql_user = user or config.mysql.user
         mysql_passwd = passwd or config.mysql.password
         mysql_db = db or config.mysql.db
