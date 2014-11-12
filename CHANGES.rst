@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+Unreleased
+-------
+
+- Feature: possibility of passing port='?' or port='2000-3000' in process fixtures which
+           leaves the selection of port to the library.
+
 0.6.0
 -------
 

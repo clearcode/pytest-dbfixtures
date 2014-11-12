@@ -5,7 +5,7 @@ python:
 - '3.4'
 install:
 - "python setup.py develop"
-- "pip install -e .[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests]"
+- "pip install -e .[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests,randomport]"
 # manually install wheel for deployment
 - "pip install wheel"
 script:

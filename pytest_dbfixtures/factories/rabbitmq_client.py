@@ -65,8 +65,8 @@ def clear_rabbitmq(process, rabbitmq_connection):
         qu.delete()
 
 
-def rabbitmq(
-        process_fixture_name, host=None, port=None, teardown=clear_rabbitmq):
+def rabbitmq(process_fixture_name, host=None, port=None,
+             teardown=clear_rabbitmq):
     """
     Connects with RabbitMQ server
 
@@ -105,8 +105,8 @@ def rabbitmq(
 
         connection = rabbitpy.Connection(
             'amqp://{host}:{port}/%2F'.format(
-                host=process.host,
-                port=process.port
+                host=host or process.host,
+                port=port or process.port
             )
         )
 
