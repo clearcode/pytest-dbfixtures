@@ -122,7 +122,7 @@ def redisdb(process_fixture_name, host=None, port=None, db=None):
 
         redis_client = redis.Redis(
             redis_host, redis_port, redis_db, decode_responses=True)
-        request.addfinalizer(redis_client.flushall)
+        request.addfinalizer(redis_client.flushdb)
 
         return redis_client
 
