@@ -18,6 +18,7 @@
 
 import importlib
 import re
+import os
 
 from pymlconf import ConfigManager
 
@@ -109,3 +110,20 @@ def extract_version(text):
     else:
         extracted_version = None
     return extracted_version
+
+def find_executable(file):
+    """
+    This function search for executable (file) using PATH environment variable
+    - returns first found occurrence
+    
+    :param str file: file name (can be with path, but path is ignored)
+    :rtype: str
+    :returns: absolute path + file name (if found) or None   
+    """
+    if os.path.isfile(file):
+        return file
+    for path in os.environ.get('PATH','').split(os.pathsep):
+        test = path + os.path.sep + os.path.basename(file)
+        if os.path.isfile(test):
+            return test 
+    return None

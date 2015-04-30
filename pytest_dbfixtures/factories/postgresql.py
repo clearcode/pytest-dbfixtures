@@ -26,7 +26,7 @@ from path import path
 
 from pytest_dbfixtures.executors.postgresql import PostgreSQLExecutor
 from pytest_dbfixtures.port import get_port
-from pytest_dbfixtures.utils import get_config, try_import
+from pytest_dbfixtures.utils import get_config, try_import, find_executable
 
 
 START_INFO = 'database system is ready to accept connections'
@@ -155,7 +155,8 @@ def postgresql_proc(executable=None, host=None, port=None, logs_prefix=''):
         :returns: tcp executor
         """
         config = get_config(request)
-        postgresql_ctl = executable or config.postgresql.postgresql_ctl
+        postgresql_ctl = executable \
+            or find_executable(config.postgresql.postgresql_ctl)
         # check if that executable exists, as it's no on system PATH
         # only replace if executable isn't passed manually
         if not os.path.exists(postgresql_ctl) and executable is None:
