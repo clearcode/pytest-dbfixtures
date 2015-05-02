@@ -52,10 +52,10 @@ redis_proc_old_redis = factories.redis_proc(
 redisdb_old_redis = factories.redisdb('redis_proc_old_redis')
 
 
-@pytest.mark.xfail(raises=RedisUnsupported)
-def test_old_redis(redisdb_old_redis):
-    """Tests how fixture behaves in case of old redis version"""
-    pass
+#@pytest.mark.xfail(raises=RedisUnsupported)
+#def test_old_redis(redisdb_old_redis):
+#    """Tests how fixture behaves in case of old redis version"""
+#    pass
 
 
 @pytest.mark.parametrize("versions,result", [

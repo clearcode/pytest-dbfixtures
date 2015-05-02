@@ -147,7 +147,8 @@ def redisdb(process_fixture_name, db=None, strict=True):
         redis_class = redis.StrictRedis if strict else redis.Redis
 
         redis_client = redis_class(
-            redis_host, redis_port, redis_db, decode_responses=True)
+            redis_host, redis_port, redis_db) 
+            # , decode_responses=True
         request.addfinalizer(redis_client.flushall)
 
         return redis_client
