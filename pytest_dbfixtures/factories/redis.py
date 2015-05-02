@@ -64,6 +64,7 @@ def redis_proc(executable=None, params=None, config_file=None,
         config = get_config(request)
 
         redis_exec = executable or find_executable(config.redis.redis_exec)
+        print("*** *** *** " + redis_exec)
         redis_params = params or config.redis.params
         redis_conf = config_file or request.config.getvalue('redis_conf')
         redis_host = host or config.redis.host

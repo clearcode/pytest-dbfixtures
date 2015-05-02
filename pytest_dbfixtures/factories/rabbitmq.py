@@ -179,7 +179,8 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
                 line[:-1].split('=') for line in configuration.readlines()
             )
 
-        rabbit_ctl = rabbit_ctl_file or find_executable(config.rabbit.rabbit_ctl)
+        rabbit_ctl = rabbit_ctl_file \
+            or find_executable(config.rabbit.rabbit_ctl)
         rabbit_server = server or find_executable(config.rabbit.rabbit_server)
         rabbit_host = host or config.rabbit.host
         rabbit_port = get_port(port or config.rabbit.port)

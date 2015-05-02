@@ -47,26 +47,25 @@ Example:
 How the executable files are searched  
 =====================================
 
-Configuration file contain information where to find the executables of each supported database and storage engine.
+Configuration file contain information where to find the executables of each supported database and storage engine
 Executables may be indicated with (or without) an absolute path, for instance:
 
-.. sourcecode:: python
+.. sourcecode:: yaml
 
-    example_exec: /usr/local/bin/example
+    executable: /usr/local/bin/example
 
 or
 
-.. sourcecode:: python
+.. sourcecode:: yaml
 
-    example_exec: example
+    executable: example
 
 File search rules are as follows:
 
-1) The factories arguments have the highest priority (if you are not using factories directly, or you are not using arguments 
+#. The factories arguments have the highest priority (if you are not using factories directly, or you are not using arguments 
    to determine the executables, then see point 2) 
-2) In second step the process try to use value from configuration file literally (it has sense for an absolute path) 
-3) At last, if the previous check fails (file or path does not exists), the process determines the "base name" of the executable 
-   (for instance for '/_not_existent_path/example', the "base name" is 'example') and tries to find it using every path from PATH 
+#. In second step the process try to use value from configuration file literally (so the user has the ability to indicate the particular executable file) 
+#. At last, if the previous check fails (file or path does not exists), the process determines the "base name" of the executable 
+   (for instance for '/_not_existent_path_/example', the "base name" is 'example') and tries to find it using every path from PATH 
    environment variable (till first success).
 
-   

@@ -111,19 +111,28 @@ def extract_version(text):
         extracted_version = None
     return extracted_version
 
+
 def find_executable(file):
     """
-    This function search for executable (file) using PATH environment variable
-    - returns first found occurrence
-    
-    :param str file: file name (can be with path, but path is ignored)
+    This function tries to determine if a given file exists in the filesystem
+    (and if YES, on what path).
+
+    It checks in two steps:
+
+    1. If the file (input argument) exists it is returned without any
+    modification.
+    2. If the first check fails, then the function tries to find the file
+    (exactly a name: os.path.basename(file)) using PATH environment
+    variable - first occurrence is returned as a result (a string containing
+    path and filename).
+
+    :param str file: file name (can be with or without the path)
     :rtype: str
-    :returns: absolute path + file name (if found) or None   
+    :returns: [path/]filename (if found) or None
     """
     if os.path.isfile(file):
         return file
-    for path in os.environ.get('PATH','').split(os.pathsep):
-        test = path + os.path.sep + os.path.basename(file)
+    for path in os.environ.get('PATH', '').split(os.pathsep):
+        test = os.path.sep.join([path, os.path.basename(file)])
         if os.path.isfile(test):
-            return test 
-    return None
+            return test
