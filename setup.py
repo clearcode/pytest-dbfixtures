@@ -44,9 +44,7 @@ setup(
     version=package_version,
     description='Databases fixtures plugin for py.test.',
     long_description=(
-        read('README.rst')
-        + '\n\n' +
-        read('CHANGES.rst')
+        read('README.rst') + '\n\n' + read('CHANGES.rst')
     ),
     author='Clearcode - The A Room',
     author_email='thearoom@clearcode.cc',
@@ -56,7 +54,7 @@ setup(
         'pytest>=2.3.4',
         'mirakuru>=0.2',  # test executors helpers
         'pyaml>=3.10',
-        'pymlconf>=0.2.10a',
+        'pymlconf>=0.2.10a,!=0.3.12,!=0.3.13,!=0.3.14',
         'path.py>=4.2',
         'port-for>=0.3.1',  # needed for random port selection
     ],

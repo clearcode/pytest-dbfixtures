@@ -20,6 +20,8 @@
 import re
 import subprocess
 
+from path import path
+
 from pytest_dbfixtures.executors import TCPExecutor
 
 
@@ -65,7 +67,7 @@ class PostgreSQLExecutor(TCPExecutor):
         """
         self.pg_ctl = pg_ctl
         self.version = self.version()
-        self.datadir = datadir
+        self.datadir = path(datadir)
         self.unixsocketdir = unixsocketdir
         command = self.PROC_START_COMMAND[self.version].format(
             pg_ctl=self.pg_ctl,
@@ -82,11 +84,14 @@ class PostgreSQLExecutor(TCPExecutor):
         """Detect postgresql version."""
         version_string = subprocess.check_output(
             [self.pg_ctl, '--version']).decode('utf-8')
-        matches = re.search('.* (?P<version>\d\.\d)\.\d', version_string)
+        matches = re.search('.* (?P<version>\d\.\d)', version_string)
         return matches.groupdict()['version']
 
     def running(self):
         """Check if server is still running."""
+        if not self.datadir.exists():
+            return False
+
         output = subprocess.check_output(
             '{pg_ctl} status -D {datadir}'.format(
                 pg_ctl=self.pg_ctl,

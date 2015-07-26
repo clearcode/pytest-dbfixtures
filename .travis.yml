@@ -1,39 +1,37 @@
-language: python
+language:
+- python
 python:
 - '2.7'
 - '3.3'
 - '3.4'
 before_install:
-  - wget -O redis-2.4.14.tar.gz https://redis.googlecode.com/files/redis-2.4.14.tar.gz
-  - tar xzf redis-2.4.14.tar.gz
-  - cd redis-2.4.14
-  - make
-  - make test
-  - sudo make install
-  - cd utils
-  - yes | sudo ./install_server.sh
-  - cd ../../
-  - /usr/local/bin/redis-server --version
-  - /usr/bin/redis-server --version
+- wget -O redis-2.4.14.tar.gz https://redis.googlecode.com/files/redis-2.4.14.tar.gz
+- tar xzf redis-2.4.14.tar.gz
+- cd redis-2.4.14
+- make
+- make test
+- sudo make install
+- cd utils
+- yes | sudo ./install_server.sh
+- cd ../../
+- /usr/local/bin/redis-server --version
+- /usr/bin/redis-server --version
 install:
-- "python setup.py develop"
-- "pip install -e .[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests]"
-# manually install wheel for deployment
-- "pip install wheel"
+- python setup.py develop
+- pip install -e .[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,tests]
+- pip install wheel
 script:
 - py.test -n 1 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures
 - pylama
 after_success:
-    - coveralls
-
+- coveralls
 deploy:
   provider: pypi
-  user:
-    secure: U82/Eiq193tV67k0QgXtJ8FGQvKTf9l4AuIis8jpAXrhWYGVH+GfASKFb9lGN8M/3tiXmCPZSP+WxEgSbBtcAIiDWiYkfVPnDf66AWf8glImyv/QOU+d8eSsP4dWrSpxo7mq+g94lhQ6cHSZtTCngU33VDCMu5RB+n27/AkS6co=
+  user: thearooom
   password:
-    secure: DRWW+buXoDjLjMDCiUKnnWiCVLUaei6iQsUTwU/3+UOPgd2htzAHo59X7GhF49N6cYG98qXZNayeM+a4QkHFnSCyzwFvlqrPpwnuINQtb0Bucoh9jnjKFq1OwAjaTdKz61YlRq6qaSXEGOKka08CN9Aj2UIUz/lNgMkZjkFmAIQ=
+    secure: A5I74CT7ZT6Ah8XUuAkKCgnCqPEdSnUJgQ+yb1v8D8kAS/FJA97e1fLt+iicVhgxzyYaP4nHtnq9t1evLEAHwnw6/L6KPAcSi5jDKTIuSPgSDTZfFtf9+GsLSaL1D3/9Og3u1zgo1tUwQBCz4HkwfeK1y0ZnezSMz6eFC1U2BvUAOO8hD/yxM/0svV2oSQIz3nMOZh877aG9RcCzDx+LvUE83v2WrrMnp9QFSjm7HvVl9BDglGHm/+rJ+0u+qLk9kXp17DN/VXDJn1DrueGyHgWtHfO5DCmSCD4akXgVvtiFRMRNgSBBkW636hu3jXZLw7L45c1WRxWRXxbrJr9qSLNLbOhkhr4Ms1YDtKoRfuJB7+vlesAc9/OpODuUNOcqyUhEQF0n3waKL8ocGIpiKogBvEtxgHmHqKjiyoNI/rlKsZKvLeWn/HHfzDlTngnhKQ7ryKMBy7WZrb3z2I9nRZ1Rw6P59ZYFl6z6rjfGmiQTcOR8tp/IrsAvlOhVDXd+FlgHG5WBoXLFFwVvTJRPJnwFbMr4tKvQIGnbRJp6YrxA9o1GDXXTc/rtsLKyr6AIMxQgajpubFTDbKcQfBRFJuxSmpJE0CI+MMDD/b0HaN2izkJ+2mO9m4MVV8LBMJeUS7WRr/t6Q7weQN1dDYXZtefQhyNsakWntq9cTx1FnLs=
   on:
     tags: true
     all_branches: true
     repo: ClearcodeHQ/pytest-dbfixtures
-  distributions: "sdist bdist_wheel"
+  distributions: sdist bdist_wheel

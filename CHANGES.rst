@@ -1,6 +1,26 @@
 CHANGES
 =======
 
+0.12.0
+----------
+
+- [bugfix] mongodb fixture no longer removes any of system.* collections
+- [bugfix] configured pytest-dbfixtures to work with pymlconf versions compatible with Python 3
+
+0.11.0
+----------
+
+- make pytest-dbfixtures compatible with mirakuru 0.5.0
+
+
+0.10.0
+-------
+
+- fix W503 pep8 errors, that appeared after new pylama got released
+- update to be able to use pytest-dbfixtures with pymongo 3
+- ability to properly use also beta versions of postgresql releases. (previously only stable versions were targeted)
+
+
 0.9.0
 -------
 
