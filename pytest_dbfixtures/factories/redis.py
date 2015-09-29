@@ -148,7 +148,7 @@ def redisdb(process_fixture_name, db=None, strict=True):
 
         redis_client = redis_class(
             redis_host, redis_port, redis_db, decode_responses=True)
-        request.addfinalizer(redis_client.flushall)
+        request.addfinalizer(redis_client.flushdb)
 
         return redis_client
 
