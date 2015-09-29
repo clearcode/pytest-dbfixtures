@@ -22,7 +22,7 @@ from path import path
 
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.utils import get_config, try_import,\
-    get_process_fixture, extract_version, compare_version
+    get_process_fixture, extract_version, compare_version, find_executable
 from pytest_dbfixtures.port import get_port
 
 REQUIRED_VERSION = '2.6'
@@ -63,7 +63,8 @@ def redis_proc(executable=None, params=None, config_file=None,
         """
         config = get_config(request)
 
-        redis_exec = executable or config.redis.redis_exec
+        redis_exec = executable or find_executable(config.redis.redis_exec)
+        print("*** *** *** " + redis_exec)
         redis_params = params or config.redis.params
         redis_conf = config_file or request.config.getvalue('redis_conf')
         redis_host = host or config.redis.host

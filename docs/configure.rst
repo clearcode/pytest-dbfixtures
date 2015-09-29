@@ -42,3 +42,30 @@ Example:
 .. sourcecode:: python
 
     mysql_proc = factories.mysql_proc(port=3308, logs_prefix='myproject-')
+
+
+How the executable files are searched  
+=====================================
+
+Configuration file contain information where to find the executables of each supported database and storage engine
+Executables may be indicated with (or without) an absolute path, for instance:
+
+.. sourcecode:: yaml
+
+    executable: /usr/local/bin/example
+
+or
+
+.. sourcecode:: yaml
+
+    executable: example
+
+File search rules are as follows:
+
+#. The factories arguments have the highest priority (if you are not using factories directly, or you are not using arguments 
+   to determine the executables, then see point 2) 
+#. In second step the process try to use value from configuration file literally (so the user has the ability to indicate the particular executable file) 
+#. At last, if the previous check fails (file or path does not exists), the process determines the "base name" of the executable 
+   (for instance for '/_not_existent_path_/example', the "base name" is 'example') and tries to find it using every path from PATH 
+   environment variable (till first success).
+

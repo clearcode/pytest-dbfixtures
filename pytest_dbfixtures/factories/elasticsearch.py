@@ -21,7 +21,8 @@ import pytest
 from path import path
 
 from pytest_dbfixtures.executors import HTTPExecutor
-from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
+from pytest_dbfixtures.utils import get_config, try_import,\
+    get_process_fixture, find_executable
 from pytest_dbfixtures.port import get_port
 
 
@@ -82,7 +83,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
             --discovery.zen.ping.multicast.enabled={multicast_enabled}
             --index.store.type={index_store_type}
             '''.format(
-            deamon=config.elasticsearch.deamon,
+            deamon=find_executable(config.elasticsearch.deamon),
             pidfile=pidfile,
             port=elasticsearch_port,
             home_path=home_path,

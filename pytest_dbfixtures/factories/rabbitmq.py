@@ -23,7 +23,7 @@ import subprocess
 import pytest
 from path import path
 
-from pytest_dbfixtures.utils import get_config
+from pytest_dbfixtures.utils import get_config, find_executable
 from pytest_dbfixtures.port import get_port
 from pytest_dbfixtures.executors import TCPExecutor
 
@@ -179,8 +179,9 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
                 line[:-1].split('=') for line in configuration.readlines()
             )
 
-        rabbit_ctl = rabbit_ctl_file or config.rabbit.rabbit_ctl
-        rabbit_server = server or config.rabbit.rabbit_server
+        rabbit_ctl = rabbit_ctl_file \
+            or find_executable(config.rabbit.rabbit_ctl)
+        rabbit_server = server or find_executable(config.rabbit.rabbit_server)
         rabbit_host = host or config.rabbit.host
         rabbit_port = get_port(port or config.rabbit.port)
 

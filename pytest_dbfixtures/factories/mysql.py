@@ -25,7 +25,7 @@ from path import path
 
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.port import get_port
-from pytest_dbfixtures.utils import get_config
+from pytest_dbfixtures.utils import get_config, find_executable
 
 
 def remove_mysql_directory(datadir):
@@ -95,9 +95,11 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
 
         """
         config = get_config(request)
-        mysql_exec = executable or config.mysql.mysql_server
-        mysql_admin_exec = admin_executable or config.mysql.mysql_admin
-        mysql_init = init_executable or config.mysql.mysql_init
+        mysql_exec = executable or find_executable(config.mysql.mysql_server)
+        mysql_admin_exec = admin_executable \
+            or find_executable(config.mysql.mysql_admin)
+        mysql_init = init_executable \
+            or find_executable(config.mysql.mysql_init)
         mysql_port = get_port(port or config.mysql.port)
         mysql_host = host or config.mysql.host
         mysql_params = params or config.mysql.params

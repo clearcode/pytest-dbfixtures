@@ -23,7 +23,8 @@ from tempfile import mkdtemp
 
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.port import get_port
-from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
+from pytest_dbfixtures.utils import get_config, try_import,\
+    get_process_fixture, find_executable
 
 
 def mongo_proc(executable=None, params=None, host=None, port=None,
@@ -65,7 +66,7 @@ def mongo_proc(executable=None, params=None, host=None, port=None,
         tmpdir = path(mkdtemp(prefix='mongo_pytest_fixture'))
         request.addfinalizer(lambda: tmpdir.exists() and tmpdir.rmtree())
 
-        mongo_exec = executable or config.mongo.mongo_exec
+        mongo_exec = executable or find_executable(config.mongo.mongo_exec)
         mongo_params = params or config.mongo.params
 
         mongo_host = host or config.mongo.host
