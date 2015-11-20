@@ -217,6 +217,10 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=None,
 
         rabbit_executor.start()
 
+        def pytest_runtest_setup(item):
+            if rabbit_executor.running() == False:
+                rabbit_executor.start()
+
         return rabbit_executor
 
     return rabbitmq_proc_fixture

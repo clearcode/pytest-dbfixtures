@@ -109,6 +109,11 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
             shutil.rmtree(home_path)
 
         request.addfinalizer(finalize_elasticsearch)
+
+        def pytest_runtest_setup(item):
+            if elasticsearch_executor.running() == False:
+                elasticsearch_executor.start()
+
         return elasticsearch_executor
 
     return elasticsearch_proc_fixture

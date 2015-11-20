@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+0.13.0
+----------
+
+- [bugfix] added hooks to all process fixtures to check if process is running, and if not try to start it again
+
 0.12.0
 ----------
 

@@ -203,6 +203,10 @@ def postgresql_proc(executable=None, host=None, port=None, logs_prefix=''):
         if '-w' in config.postgresql.startparams:
             wait_for_postgres(logfile_path, START_INFO)
 
+        def pytest_runtest_setup(item):
+            if postgresql_executor.running() == False:
+                postgresql_executor.start()
+
         return postgresql_executor
 
     return postgresql_proc_fixture
