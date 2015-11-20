@@ -59,3 +59,10 @@ def test_random_port(mongodb_rand):
     server_info = mongodb_rand.server_info()
     assert 'ok' in server_info
     assert server_info['ok'] == 1.0
+
+
+mongo_proc.stop()
+
+
+def test_restart_stopped_process(mongo_proc):
+    assert mongo_proc.running() is True

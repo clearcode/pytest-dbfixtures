@@ -20,3 +20,10 @@ elasticsearch_random = factories.elasticsearch('elasticsearch_proc_random')
 def test_random_port(elasticsearch_random):
     """Tests if elasticsearch fixture can be started on random port"""
     assert elasticsearch_random.info()['status'] == 200
+
+
+elasticsearch_proc.stop()
+
+
+def test_restart_stopped_process(elasticsearch_proc):
+    assert elasticsearch_proc.running() is True

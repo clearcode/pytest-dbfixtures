@@ -53,3 +53,10 @@ postgresql_rand = factories.postgresql('postgresql_rand_proc')
 def test_rand_postgres_port(postgresql_rand):
     """Tests if postgres fixture can be started on random port"""
     assert postgresql_rand.status == psycopg2.extensions.STATUS_READY
+
+
+postgresql_proc.stop()
+
+
+def test_restart_stopped_process(postgresql_proc):
+    assert postgresql_proc.running() is True

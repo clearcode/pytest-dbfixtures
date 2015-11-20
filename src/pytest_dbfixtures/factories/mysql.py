@@ -146,7 +146,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
 
         request.addfinalizer(stop_server_and_remove_directory)
 
-        def pytest_runtest_setup(item):
+        def pytest_runtest_setup():
             if mysql_executor.running() == False:
                 mysql_executor.start()
 
