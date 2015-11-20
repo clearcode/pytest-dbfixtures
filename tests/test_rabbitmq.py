@@ -95,3 +95,10 @@ def test_random_port_node_names(rabbitmq_rand_proc2, rabbitmq_rand_proc3):
     """
     assert (rabbitmq_rand_proc2.env['RABBITMQ_NODENAME'] !=
             rabbitmq_rand_proc3.env['RABBITMQ_NODENAME'])
+
+
+rabbitmq_proc.stop()
+
+
+def test_restart_stopped_process(rabbitmq_proc):
+    assert rabbitmq_proc.running() is True

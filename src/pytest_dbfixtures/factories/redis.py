@@ -109,6 +109,10 @@ def redis_proc(executable=None, params=None, config_file=None,
         redis_executor.start()
         request.addfinalizer(redis_executor.stop)
 
+        def pytest_runtest_setup():
+            if redis_executor.running() == False:
+                redis_executor.start()
+
         return redis_executor
 
     return redis_proc_fixture

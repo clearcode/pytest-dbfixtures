@@ -40,3 +40,10 @@ def test_random_port(mysql_rand):
     """Tests if mysql fixture can be started on random port"""
     mysql = mysql_rand
     mysql.cursor()
+
+
+mysql_proc.stop()
+
+
+def test_restart_stopped_process(mysql_proc):
+    assert mysql_proc.running() is True

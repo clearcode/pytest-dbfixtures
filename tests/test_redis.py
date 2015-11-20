@@ -91,3 +91,10 @@ def test_compare_version(versions, result):
 ])
 def test_extract_version(text, result):
     assert extract_version(text) == result
+
+
+redis_proc.stop()
+
+
+def test_restart_stopped_process(redis_proc):
+    assert redis_proc.running() is True
