@@ -28,5 +28,5 @@ elasticsearch_proc.stop()
 
 
 def test_restart_stopped_process(elasticsearch_proc):
-	"""Test if process fixture hook correctly restart stopped process"""
+    """Test if process fixture hook correctly restart stopped process"""
     assert elasticsearch_proc.running() is True
