@@ -93,6 +93,10 @@ def mongo_proc(executable=None, params=None, host=None, port=None,
 
         request.addfinalizer(mongo_executor.stop)
 
+        def pytest_runtest_setup():
+            if mongo_executor.running() == False:
+                mongo_executor.start()
+
         return mongo_executor
 
     return mongo_proc_fixture

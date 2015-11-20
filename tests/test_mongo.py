@@ -59,3 +59,13 @@ def test_random_port(mongodb_rand):
     server_info = mongodb_rand.server_info()
     assert 'ok' in server_info
     assert server_info['ok'] == 1.0
+
+
+mongo_proc = factories.mongo_proc()
+mongodb = factories.mongodb('mongo_proc')
+mongo_proc.stop()
+
+
+def test_restart_stopped_process(mongo_proc):
+    """Test if process fixture hook correctly restart stopped process"""
+    assert mongo_proc.running() is True
