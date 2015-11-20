@@ -55,8 +55,11 @@ def test_rand_postgres_port(postgresql_rand):
     assert postgresql_rand.status == psycopg2.extensions.STATUS_READY
 
 
+postgresql_proc = factories.postgresql_proc()
+postgresql = factories.postgresql('postgresql_proc')
 postgresql_proc.stop()
 
 
 def test_restart_stopped_process(postgresql_proc):
+    """Test if process fixture hook correctly restart stopped process"""
     assert postgresql_proc.running() is True

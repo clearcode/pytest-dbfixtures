@@ -42,8 +42,11 @@ def test_random_port(mysql_rand):
     mysql.cursor()
 
 
+mysql_proc = factories.mysql_proc()
+mysql = factories.mysql('mysql_proc')
 mysql_proc.stop()
 
 
 def test_restart_stopped_process(mysql_proc):
+    """Test if process fixture hook correctly restart stopped process"""
     assert mysql_proc.running() is True

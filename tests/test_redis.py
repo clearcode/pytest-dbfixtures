@@ -93,8 +93,11 @@ def test_extract_version(text, result):
     assert extract_version(text) == result
 
 
+redis_proc = factories.redis_proc()
+redisdb = factories.redisdb('redis_proc')
 redis_proc.stop()
 
 
 def test_restart_stopped_process(redis_proc):
+    """Test if process fixture hook correctly restart stopped process"""
     assert redis_proc.running() is True
