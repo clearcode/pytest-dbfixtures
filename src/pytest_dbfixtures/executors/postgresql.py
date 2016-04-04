@@ -103,7 +103,7 @@ class PostgreSQLExecutor(TCPExecutor):
     def stop(self):
         """Issues a stop request to pg_ctl"""
         subprocess.check_output(
-            '{pg_ctl} stop -D {datadir} -m f'.format(
+            '{pg_ctl} stop -D {datadir} -m f -W'.format(
                 pg_ctl=self.pg_ctl,
                 datadir=self.datadir,
                 port=self.port,
