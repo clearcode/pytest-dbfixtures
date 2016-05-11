@@ -28,7 +28,7 @@ from pytest_dbfixtures.port import get_port
 def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
                        network_publish_host='127.0.0.1',
                        discovery_zen_ping_multicast_enabled=False,
-                       index_store_type='memory', logs_prefix=''):
+                       index_store_type='', logs_prefix=''):
     """
     Creates elasticsearch process fixture.
 
@@ -49,8 +49,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
     :param bool discovery_zen_ping_multicast_enabled: whether to enable or
         disable host discovery
         http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-discovery-zen.html
-    :param str index_store_type: index.store.type setting. *memory* by default
-        to speed up tests
+    :param str index_store_type: index.store.type setting.
     :param str logs_prefix: prefix for log filename
     """
     @pytest.fixture(scope='session')
@@ -71,6 +70,11 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
         work_path = '/tmp/elasticsearch_{0}_tmp'.format(elasticsearch_port)
         cluster = cluster_name or 'dbfixtures.{0}'.format(elasticsearch_port)
         multicast_enabled = str(discovery_zen_ping_multicast_enabled).lower()
+        es_version = try_import('elasticsearch', request)[0].__version__[0]
+        if not index_store_type and es_version < 2:
+            store_type = 'memory'
+        else:
+            store_type = index_store_type
 
         command_exec = '''
             {deamon} -p {pidfile} --http.port={port}
@@ -91,8 +95,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
             cluster=cluster,
             network_publish_host=network_publish_host,
             multicast_enabled=multicast_enabled,
-            index_store_type=index_store_type
-
+            index_store_type=store_type
         )
 
         elasticsearch_executor = HTTPExecutor(
