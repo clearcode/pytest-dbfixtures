@@ -1,4 +1,4 @@
-from path import path
+from path import Path
 
 from pytest_dbfixtures import factories
 
@@ -47,7 +47,7 @@ def test_third_mongo(mongodb, mongodb2, mongodb3):
 
 def test_mongo_proc(mongo_proc, mongo_proc2, mongo_proc3):
     for m in (mongo_proc, mongo_proc2, mongo_proc3):
-        assert path('/tmp/mongo.{port}.log'.format(port=m.port)).isfile()
+        assert Path('/tmp/mongo.{port}.log'.format(port=m.port)).isfile()
 
 
 mongo_proc_rand = factories.mongo_proc(port=None, params=mongo_params)

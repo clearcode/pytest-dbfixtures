@@ -20,7 +20,7 @@
 import re
 import subprocess
 
-from path import path
+from path import Path
 
 from pytest_dbfixtures.executors import TCPExecutor
 
@@ -58,7 +58,7 @@ class PostgreSQLExecutor(TCPExecutor):
         """
         self.pg_ctl = pg_ctl
         self.version = self.version()
-        self.datadir = path(datadir)
+        self.datadir = Path(datadir)
         self.unixsocketdir = unixsocketdir
         command = self.proc_start_command().format(
             pg_ctl=self.pg_ctl,

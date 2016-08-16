@@ -17,7 +17,7 @@
 # along with pytest-dbfixtures.  If not, see <http://www.gnu.org/licenses/>.
 import pytest
 
-from path import path
+from path import Path
 
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.port import get_port
@@ -58,7 +58,7 @@ def dynamodb_proc(dynamodb_dir=None, host='localhost', port=None, delay=False):
         :rtype: pytest_dbfixtures.executors.TCPExecutor
         :returns: tcp executor
         """
-        path_dynamodb_jar = path(
+        path_dynamodb_jar = Path(
             dynamodb_dir or request.config.getvalue('dynamodbdir')
         ) / 'DynamoDBLocal.jar'
 

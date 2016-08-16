@@ -21,7 +21,7 @@ import shutil
 import subprocess
 
 import pytest
-from path import path
+from path import Path
 
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.port import get_port
@@ -106,7 +106,7 @@ def mysql_proc(executable=None, admin_executable=None, init_executable=None,
         datadir = '/tmp/mysqldata_{port}'.format(port=mysql_port)
         pidfile = '/tmp/mysql-server.{port}.pid'.format(port=mysql_port)
         unixsocket = '/tmp/mysql.{port}.sock'.format(port=mysql_port)
-        logsdir = path(request.config.getvalue('logsdir'))
+        logsdir = Path(request.config.getvalue('logsdir'))
         logfile_path = logsdir / '{prefix}mysql-server.{port}.log'.format(
             prefix=logs_prefix,
             port=mysql_port

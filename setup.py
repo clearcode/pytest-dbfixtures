@@ -56,7 +56,7 @@ setup(
         'mirakuru>=0.2',  # test executors helpers
         'pyaml>=3.10',
         'pymlconf>=0.2.10a,!=0.3.12,!=0.3.13,!=0.3.14,!=0.5.0',
-        'path.py>=4.2',
+        'path.py>=6.2',
         'port-for>=0.3.1',  # needed for random port selection
     ],
     package_dir={'': 'src'},

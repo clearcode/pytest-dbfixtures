@@ -18,7 +18,7 @@
 import shutil
 
 import pytest
-from path import path
+from path import Path
 
 from pytest_dbfixtures.executors import HTTPExecutor
 from pytest_dbfixtures.utils import get_config, try_import, get_process_fixture
@@ -64,7 +64,7 @@ def elasticsearch_proc(host='127.0.0.1', port=9201, cluster_name=None,
 
         pidfile = '/tmp/elasticsearch.{0}.pid'.format(elasticsearch_port)
         home_path = '/tmp/elasticsearch_{0}'.format(elasticsearch_port)
-        logsdir = path(request.config.getvalue('logsdir'))
+        logsdir = Path(request.config.getvalue('logsdir'))
         logs_path = logsdir / '{prefix}elasticsearch_{port}_logs'.format(
             prefix=logs_prefix,
             port=elasticsearch_port

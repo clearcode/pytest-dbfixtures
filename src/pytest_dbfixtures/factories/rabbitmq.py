@@ -21,7 +21,7 @@ import os
 import subprocess
 
 import pytest
-from path import path
+from path import Path
 
 from pytest_dbfixtures.utils import get_config
 from pytest_dbfixtures.port import get_port
@@ -120,12 +120,12 @@ def rabbit_path(name):
     if not env:
         return
 
-    env = path(env)
+    env = Path(env)
 
     if not env.exists():
         return
 
-    return path(env)
+    return Path(env)
 
 
 def rabbitmq_proc(config_file=None, server=None, host=None, port=-1,
@@ -185,9 +185,9 @@ def rabbitmq_proc(config_file=None, server=None, host=None, port=-1,
         rabbit_host = host or config.rabbit.host
         rabbit_port = get_port(port) or get_port(config.rabbit.port)
 
-        rabbit_path = path('/tmp/rabbitmq.{0}/'.format(rabbit_port))
+        rabbit_path = Path('/tmp/rabbitmq.{0}/'.format(rabbit_port))
 
-        logsdir = path(request.config.getvalue('logsdir'))
+        logsdir = Path(request.config.getvalue('logsdir'))
         rabbit_log = logsdir / '{prefix}rabbit-server.{port}.log'.format(
             prefix=logs_prefix,
             port=rabbit_port
