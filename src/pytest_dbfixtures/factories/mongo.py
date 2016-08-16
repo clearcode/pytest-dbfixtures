@@ -18,7 +18,7 @@
 
 import pytest
 
-from path import path
+from path import Path
 from tempfile import mkdtemp
 
 from pytest_dbfixtures.executors import TCPExecutor
@@ -63,7 +63,7 @@ def mongo_proc(executable=None, params=None, host=None, port=-1,
 
         # make a temporary directory for tests and delete it
         # if tests have been finished
-        tmpdir = path(mkdtemp(prefix='mongo_pytest_fixture'))
+        tmpdir = Path(mkdtemp(prefix='mongo_pytest_fixture'))
         request.addfinalizer(lambda: tmpdir.exists() and tmpdir.rmtree())
 
         mongo_exec = executable or config.mongo.mongo_exec
@@ -72,7 +72,7 @@ def mongo_proc(executable=None, params=None, host=None, port=-1,
         mongo_host = host or config.mongo.host
         mongo_port = get_port(port) or get_port(config.mongo.port)
 
-        logsdir = path(request.config.getvalue('logsdir'))
+        logsdir = Path(request.config.getvalue('logsdir'))
         mongo_logpath = logsdir / '{prefix}mongo.{port}.log'.format(
             prefix=logs_prefix,
             port=mongo_port

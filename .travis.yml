@@ -18,7 +18,10 @@ install:
   - $INSTALLATION
   - pip install pytest_dbfixtures[mongodb,redis,rabbitmq,mysql,postgresql,elasticsearch,dynamodb,tests] coveralls wheel
 script:
-  - py.test -n $XDIST --max-slave-restart=0 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures
+  # Turn all warnings into errors, except for known warnings occurring in other packages used in tests. (Current Python
+  # 3.4 and 3.5 versions raise a warning in site.py; setuptools uses imp instead of importlib.) Quotes are needed since
+  # it's YAML and environment variables with colons look like YAML objects.
+  - "PYTHONWARNINGS=error,default::DeprecationWarning:site:,default::PendingDeprecationWarning:imp:,default::PendingDeprecationWarning:_pytest.main:,default::PendingDeprecationWarning:pkg_resources: py.test -n $XDIST --max-slave-restart=0 --showlocals --verbose --cov pytest_dbfixtures tests -p no:dbfixtures"
   - pylama
 after_success:
   - coveralls

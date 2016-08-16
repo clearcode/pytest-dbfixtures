@@ -18,7 +18,7 @@
 import os
 
 import pytest
-from path import path
+from path import Path
 
 from pytest_dbfixtures.executors import TCPExecutor
 from pytest_dbfixtures.utils import get_config, try_import,\
@@ -73,7 +73,7 @@ def redis_proc(executable=None, params=None, config_file=None,
         pidfile = 'redis-server.{port}.pid'.format(port=redis_port)
         unixsocket = 'redis.{port}.sock'.format(port=redis_port)
         dbfilename = 'dump.{port}.rdb'.format(port=redis_port)
-        logsdir = path(request.config.getvalue('logsdir'))
+        logsdir = Path(request.config.getvalue('logsdir'))
         logfile_path = logsdir / '{prefix}redis-server.{port}.log'.format(
             prefix=logs_prefix,
             port=redis_port

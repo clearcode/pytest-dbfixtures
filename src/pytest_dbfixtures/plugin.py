@@ -18,13 +18,13 @@
 import warnings
 
 
-from path import path
+from path import Path
 import pytest
 
 from pytest_dbfixtures import factories
 
 
-ROOT_DIR = path(__file__).parent.parent.abspath()
+ROOT_DIR = Path(__file__).parent.parent.abspath()
 CONF_DIR = ROOT_DIR / 'pytest_dbfixtures' / 'conf'
 
 
@@ -73,17 +73,17 @@ def pytest_addoption(parser):
 def pytest_load_initial_conftests(early_config, parser, args):
     """Validate paths passed to py.test."""
     db_conf = early_config.getvalue('db_conf')
-    if db_conf and not path(db_conf).isfile():
+    if db_conf and not Path(db_conf).isfile():
         raise ValueError(
             'argument passed to --dbfixtures-config is not a valid file path'
         )
     redis_conf = early_config.getvalue('redis_conf')
-    if redis_conf and not path(redis_conf).isfile():
+    if redis_conf and not Path(redis_conf).isfile():
         raise ValueError(
             'argument passed to --redis-config is not a valid file path'
         )
     rabbit_conf = early_config.getvalue('rabbit_conf')
-    if rabbit_conf and not path(rabbit_conf).isfile():
+    if rabbit_conf and not Path(rabbit_conf).isfile():
         raise ValueError(
             'argument passed to --rabbit-config is not a valid file path'
         )

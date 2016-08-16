@@ -23,7 +23,7 @@ import subprocess
 import time
 
 import pytest
-from path import path
+from path import Path
 
 from pytest_dbfixtures.executors.postgresql import PostgreSQLExecutor
 from pytest_dbfixtures.port import get_port
@@ -169,7 +169,7 @@ def postgresql_proc(executable=None, host=None, port=-1, logs_prefix=''):
         pg_host = host or config.postgresql.host
         pg_port = get_port(port) or get_port(config.postgresql.port)
         datadir = '/tmp/postgresqldata.{0}'.format(pg_port)
-        logsdir = path(request.config.getvalue('logsdir'))
+        logsdir = Path(request.config.getvalue('logsdir'))
         logfile_path = logsdir / '{prefix}postgresql.{port}.log'.format(
             prefix=logs_prefix,
             port=pg_port
