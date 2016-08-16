@@ -233,7 +233,10 @@ def postgresql(process_fixture_name, db=None):
         """
         proc_fixture = request.getfuncargvalue(process_fixture_name)
 
-        psycopg2, config = try_import('psycopg2', request)
+        if platform.python_implementation() == 'PyPy':
+            psycopg2, config = try_import('psycopg2cffi', request)
+        else:
+            psycopg2, config = try_import('psycopg2', request)
         pg_host = proc_fixture.host
         pg_port = proc_fixture.port
         pg_db = db or config.postgresql.db

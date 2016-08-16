@@ -71,7 +71,10 @@ setup(
             'Mock==2.0.0',
         ],
         'mysql': ['mysqlclient'],
-        'postgresql': ['psycopg2'],
+        'postgresql:platform.python_implementation != "PyPy"': ['psycopg2'],
+        'postgresql:platform.python_implementation == "PyPy"': [
+            'psycopg2cffi',
+        ],
         'mongodb': ['pymongo'],
         'elasticsearch': ['elasticsearch'],
         'redis': ['redis'],
