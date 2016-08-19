@@ -1,4 +1,7 @@
-import psycopg2
+try:
+    import psycopg2
+except ImportError:
+    import psycopg2cffi as psycopg2
 import pytest
 
 from pytest_dbfixtures import factories
