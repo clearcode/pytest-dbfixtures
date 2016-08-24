@@ -42,3 +42,24 @@ Coding style
 
 #. All python coding style are being enforced by `Pylama <https://pypi.python.org/pypi/pylama>`_ and configured in pylama.ini file.
 #. Additional, not always mandatory checks are being performed by `QuantifiedCode <https://www.quantifiedcode.com/app/project/gh:ClearcodeHQ:pytest-dbfixtures>`_
+
+
+Vagrant
+-------
+
+Since pytest-dbfixtures requires having several database servers installed locally for its tests to run, we provide a
+Vagrantfile for local development with `Vagrant <https://www.vagrantup.com/>`_.
+
+It is tested with Vagrant-LXC.
+
+To start the Vagrant instance, run ``vagrant up`` in the ``pytest-dbfixtures`` directory (it's slow, since dependencies
+are downloaded). Run ``vagrant ssh`` to log in on the Vagrant instance. The project source is mounted (or copied) in
+the ``/vagrant`` directory.
+
+Run tests in the virtualenv inside Vagrant::
+
+    . venv/bin/activate
+    cd /vagrant
+    py.test -x
+
+Run ``vagrant destroy`` to delete the Vagrant instance.
