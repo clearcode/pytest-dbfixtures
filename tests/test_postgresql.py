@@ -53,3 +53,23 @@ postgresql_rand = factories.postgresql('postgresql_rand_proc')
 def test_rand_postgres_port(postgresql_rand):
     """Tests if postgres fixture can be started on random port"""
     assert postgresql_rand.status == psycopg2.extensions.STATUS_READY
+
+
+postgresql_keep_database_proc = factories.postgresql_proc(port=None)
+postgresql_keep_database = factories.postgresql(
+    'postgresql_keep_database_proc', keep_database=True)
+
+
+@pytest.mark.parametrize('run', (0, 1))
+def test_postgresql_keep_database(postgresql_keep_database, run):
+    """
+    Test using a PostgreSQL process keeping databases between tests.
+
+    The test runs twice, so it involves cases like not creating the database if
+    it exists and really dropping the table created by the test query
+    (otherwise the second run would fail).
+    """
+    cur = postgresql_keep_database.cursor()
+    cur.execute(query)
+    postgresql_keep_database.commit()
+    cur.close()

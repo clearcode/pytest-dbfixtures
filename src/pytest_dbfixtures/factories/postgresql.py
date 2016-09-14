@@ -1,3 +1,4 @@
+# -*- mode: python; fill-column: 79 -*-
 # Copyright (C) 2013 by Clearcode <http://clearcode.cc>
 # and associates (see AUTHORS).
 
@@ -83,7 +84,7 @@ def init_postgresql_directory(postgresql_ctl, user, datadir):
     subprocess.check_output(' '.join(init_directory), shell=True)
 
 
-def init_postgresql_database(psycopg2, user, host, port, db):
+def init_postgresql_database(psycopg2, user, host, port, db, if_exists=False):
     """
     #. Connect to psql with proper isolation level
     #. Create test database
@@ -94,13 +95,24 @@ def init_postgresql_database(psycopg2, user, host, port, db):
     :param str host: postgresql host
     :param str port: postgresql port
     :param str db: database name
+    :param bool if_exists: if True, do not raise an exception if the database
+        already exists (default is False)
 
     """
 
     conn = psycopg2.connect(user=user, host=host, port=port)
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
-    cur.execute('CREATE DATABASE ' + db)
+    # There is no CREATE DATABASE IF EXISTS statement, so we simulate it by
+    # querying for the database first.
+    create = True
+    if if_exists:
+        cur.execute("SELECT datname FROM pg_database WHERE datname='%s'" % db)
+        if cur.fetchall():
+            # The database exists.
+            create = False
+    if create:
+        cur.execute('CREATE DATABASE ' + db)
     cur.close()
     conn.close()
 
@@ -121,6 +133,36 @@ def drop_postgresql_database(psycopg2, user, host, port, db):
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
     cur = conn.cursor()
     cur.execute('DROP DATABASE IF EXISTS %s' % db)
+    cur.close()
+    conn.close()
+
+
+def drop_postgresql_tables(psycopg2, user, host, port, db):
+    """
+    #. Connect to psql with proper isolation level
+    #. Drop all tables from the test database
+    #. Close connection
+
+    :param module psycopg2: psycopg2 object
+    :param str user: postgresql username
+    :param str host: postgresql host
+    :param str port: postgresql port
+    :param str db: database name
+    """
+    conn = psycopg2.connect(user=user, host=host, port=port, dbname=db)
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+    cur = conn.cursor()
+    # List tables.
+    cur.execute(
+        "SELECT table_name FROM information_schema.tables"
+        " WHERE table_schema='public'")
+    tables = cur.fetchall()
+    # Drop tables. CASCADE allows dropping them in any order. Their name might
+    # need quoting.
+    if tables:
+        cur.execute(
+            'DROP TABLE %s CASCADE' % ', '.join(
+                '"%s"' % table for table in tables))
     cur.close()
     conn.close()
 
@@ -209,12 +251,16 @@ def postgresql_proc(executable=None, host=None, port=-1, logs_prefix=''):
     return postgresql_proc_fixture
 
 
-def postgresql(process_fixture_name, db=None):
+def postgresql(process_fixture_name, db=None, keep_database=False):
     """
     postgresql database factory.
 
     :param str process_fixture_name: name of the process fixture
     :param int db: database name
+    :param bool keep_detabase: if True, drop tables and keep the database after
+        the test (allowing tests to keep open database connections in services
+        started by session-scoped fixtures), if False (default) drop the
+        database after the test
     :rtype: func
     :returns: function which makes a connection to postgresql
     """
@@ -239,7 +285,8 @@ def postgresql(process_fixture_name, db=None):
         pg_db = db or config.postgresql.db
 
         init_postgresql_database(
-            psycopg2, config.postgresql.user, pg_host, pg_port, pg_db
+            psycopg2, config.postgresql.user, pg_host, pg_port, pg_db,
+            if_exists=keep_database
         )
         conn = psycopg2.connect(
             dbname=pg_db,
@@ -248,13 +295,18 @@ def postgresql(process_fixture_name, db=None):
             port=pg_port
         )
 
-        def drop_database():
+        def drop_database_or_tables():
             conn.close()
-            drop_postgresql_database(
-                psycopg2, config.postgresql.user, pg_host, pg_port, pg_db
-            )
+            if keep_database:
+                drop_postgresql_tables(
+                    psycopg2, config.postgresql.user, pg_host, pg_port, pg_db
+                )
+            else:
+                drop_postgresql_database(
+                    psycopg2, config.postgresql.user, pg_host, pg_port, pg_db
+                )
 
-        request.addfinalizer(drop_database)
+        request.addfinalizer(drop_database_or_tables)
 
         return conn
 
